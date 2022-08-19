@@ -1,0 +1,47 @@
+import math
+
+"""str_split is a helper function. It is used in the implementation of the Karatsuba multiplication algorithm below."""
+
+def str_split(str1, str2):
+    n = max(len(str1), len(str2))
+    half_n = math.floor(n/2)
+    
+    if len(str1) <= half_n:
+        b = str1
+        a = '0'
+    else:
+        b = str1[-half_n::]
+        a = str1[:len(str1) - half_n]
+    
+    if len(str2) <= half_n:
+        d = str2
+        c = '0'
+    else:
+        d = str2[-half_n::]
+        c = str2[:len(str2) - half_n]
+     
+    return(a, b, c, d, half_n)  
+   
+"""Implements Karatsuba multiplication."""
+
+def karatsuba(r, s):
+    r = str(r)
+    s = str(s)
+    if len(r) == 1 and len(s) == 1:
+        return int(r)*int(s)
+   
+    else: 
+        str_split(r, s)
+        
+        a = str_split(r, s)[0]
+        b = str_split(r, s)[1]
+        c = str_split(r, s)[2]
+        d = str_split(r, s)[3]
+        n = str_split(r, s)[4]
+            
+        karatsuba(int(a), int(c))  
+        karatsuba(int(b), int(d))  
+        karatsuba(int(a) + int(b), int(c) + int(d) )
+        
+        return (10**(2*n))*int(a)*int(c) + (10**(n))*(((int(a) + int(b)) * (int(c) + int(d))) - ((int(a))*int(c) + (int(b)*int(d)))) + int(b)*int(d) 
+ 
