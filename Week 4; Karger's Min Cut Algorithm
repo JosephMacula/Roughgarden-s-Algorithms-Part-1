@@ -1,0 +1,88 @@
+def load_graph(file_name):
+    
+    """
+    Function that loads a graph given the filename
+    for a text representation of the graph
+
+    Returns a dictionary that models a graph
+    """
+    graph_file = open(file_name, 'r')
+    graph_text = graph_file.read()
+    graph_lines = graph_text.split('\n')
+    graph_lines = graph_lines[:-1]
+
+    
+
+    degrees = 0
+
+    answer_graph = {}
+    for line in graph_lines:
+        neighbors = line.split('\t')
+        node = int(neighbors[0])
+        answer_graph[node] = []
+        for neighbor in neighbors[1: -1]:
+            answer_graph[node].append(int(neighbor))
+            degrees += 1
+
+    edges = degrees / 2
+
+    return answer_graph       
+
+  
+import random
+import copy
+
+def karger(input_graph):
+    
+    '''First pass the input to a local variable. This will ensure we don't
+    have to read in the graph data every time we want to run the karger 
+    min cut algorithm.'''
+    
+    graph_copy = copy.deepcopy(input_graph)
+    
+    while len(graph_copy.keys()) > 2:
+        
+        '''Pick a random vertex to retain. We need to pick a random key from
+        the dictionary representing our graph. We do this in two steps. First,
+        pick a valid index at random. Next, take the set of keys as a list and
+        select the key at the random index chosen in step 1.'''
+       
+        rand1 = random.randint(0, len(graph_copy.keys())-1)
+        retained_vertex = list(graph_copy.keys())[rand1]    
+        
+
+        '''Pick a random vertex to remove. The method is similar to the method
+        used to pick a random vertex to retain.'''                
+        
+        rand2 = random.randint(0, len(graph_copy[retained_vertex])-1)
+        removed_vertex = graph_copy[retained_vertex][rand2]
+        
+        
+        '''Add the edges that had the removed vertex as an endpoint to the
+        retained vertex.'''
+        
+        graph_copy[retained_vertex] = graph_copy[retained_vertex] + graph_copy[removed_vertex]
+        
+        '''Update the graph so that the removed vertex is replaced with the 
+        retained vertex.'''
+        
+        for i in graph_copy.keys():
+            for j in range(0, len(graph_copy[i])):
+                if graph_copy[i][j] == removed_vertex:
+                    graph_copy[i][j] = retained_vertex
+                    
+        '''Remove the chosen vertex.'''            
+         
+        graph_copy.pop(removed_vertex)      
+        
+        '''Remove loops.'''
+        
+        r = 0
+        while r < len(graph_copy[retained_vertex]):
+            if graph_copy[retained_vertex][r] == retained_vertex:
+                graph_copy[retained_vertex].pop(r)
+            else:
+                r += 1
+   
+    x = list(graph_copy.keys())[0]
+    return len(graph_copy[x])
