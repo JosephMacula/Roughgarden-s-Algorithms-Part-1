@@ -1,0 +1,57 @@
+def array_partitioner(input_array, l, r):
+    
+    p = input_array[l]
+    i = l + 1
+    
+    for j in range((l + 1), r):
+        if input_array[j] < p:
+            n = input_array[i]
+            input_array[i] = input_array[j]
+            input_array[j] = n
+            i += 1     
+        
+    input_array[l] = input_array[i - 1]
+    input_array[i - 1] = p
+    return i - 1
+
+def choose_pivot_median(input_array, l, r):
+    if r - l % 2 == 0:
+        s = (r - l)//2 - 1
+        pivot_array = [input_array[l], input_array[r-1], input_array[l + s]]
+        pivot_array.sort()
+        if input_array[l] == pivot_array[1]:
+            return l
+        if input_array[r-1] == pivot_array[1]:
+            return r - 1
+        else:
+            return l + s
+    
+    else:
+        s = (r - l)//2 
+        pivot_array = [input_array[l], input_array[r-1], input_array[l + s]]
+        pivot_array.sort()
+        if input_array[l] == pivot_array[1]:
+            return l
+        if input_array[r-1] == pivot_array[1]:
+            return r - 1
+        else:
+            return l + s
+
+m = 0
+
+def quicksort(input_array, l, r):
+    
+    global m
+    
+    if l >= r-1:         
+        return 
+    else:
+        i = choose_pivot_median(input_array, l, r)
+        t = input_array[i]
+        input_array[i] = input_array[l]
+        input_array[l] = t
+        j = array_partitioner(input_array, l, r)
+        m = m + len(input_array[l:r]) - 1
+        quicksort(input_array, l, j)
+        quicksort(input_array, j + 1, r)
+        
